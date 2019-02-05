@@ -38,8 +38,8 @@ toArray {arr, shift, size}
     | shift == 0 = arr
     | otherwise  = abort "Slice does not cover whole array"
 
-splitSlice :: !*(ArraySlice a) !Int -> *(*(ArraySlice a), *(ArraySlice a))
-splitSlice {arr, shift, size} j
+split :: !*(ArraySlice a) !Int -> *(*(ArraySlice a), *(ArraySlice a))
+split {arr, shift, size} j
     | j >= size = abort "Attempt to split after slice after"
     | j < shift = abort "Attempt to split before slice beginning"
 
@@ -50,19 +50,16 @@ splitSlice {arr, shift, size} j
               unsafeArrayDup :: u:{a} -> u:(u:{a}, u:{a})
               unsafeArrayDup x = code {
                       push_a 0
-                      push_a 1
-                      update_a 1 2
-                      updatepop_a 0 1
                   }
 
-mergeSlices :: !*(ArraySlice a) !*(ArraySlice a) -> *(ArraySlice a)
-mergeSlices {arr, shift, size} {arr = arr`, shift = shift`, size = size`}
+merge :: !*(ArraySlice a) !*(ArraySlice a) -> *(ArraySlice a)
+merge {arr, shift, size} {arr = arr`, shift = shift`, size = size`}
     | not (same arr arr`)      = abort "Attempt to merge slice of different arrays"
     | (shift + size) <> shift` = abort "Attempt to merge not adjacent slices"
 
     | otherwise = {arr = arr, shift = shift, size = size + size`}
     where
-        same :: !.a !.a -> Bool
+        same :: .a .a -> Bool
         same _ _ = code {
             push_a_b 0
             push_a_b 1

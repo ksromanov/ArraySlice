@@ -1,10 +1,12 @@
 module main
 import StdArray, _SystemArray, StdString
 import _ArraySlice
+import QuickSort
 
+// Simple test of merge/split/quicksort
 Start :: String
-Start = "Hello!" +++ m +++ "8"
-    where i = fromArray {"i", "I"}
-          (a, b) = split i 1
-          j = merge a b
-          m = select j 0
+Start = "Result: '" +++ letter +++ "'"
+    where slice = quicksort` (fromArray {"i", "I", "a", "A"})
+          (sliceA, sliceB) = split slice 2
+          slice` = merge sliceA sliceB
+          letter = select slice` 0

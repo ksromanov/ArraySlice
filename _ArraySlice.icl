@@ -17,7 +17,7 @@ instance Array ArraySlice a where
 
 	size {arr, shift, size}  = size
 
-	usize (slice=:{size = sz}) = (sz, slice)
+	usize slice=:{size = sz} = (sz, slice)
 
 	update slice=:{arr, shift} i el = { slice & arr = arr`}
             where arr` = update arr (i + shift) el
@@ -40,11 +40,11 @@ toArray {arr, shift, size}
 
 split :: !*(ArraySlice a) !Int -> *(*(ArraySlice a), *(ArraySlice a))
 split {arr, shift, size} j
-    | j >= size = abort "Attempt to split after slice after"
-    | j < shift = abort "Attempt to split before slice beginning"
+    | j >= size = abort "Attempt to split after slice end"
+    | j <= 0    = abort "Attempt to split before slice beginning"
 
-    | otherwise = ({arr = arr`,  shift,     size = j - shift},
-                   {arr = arr``, shift = j, size = size - (j - shift)})
+    | otherwise = ({arr = arr`,  shift,             size = j},
+                   {arr = arr``, shift = shift + j, size = size - j})
         where (arr`, arr``) = unsafeArrayDup arr
               // Helper function, which overcomes uniqueness restrictions
               unsafeArrayDup :: u:{a} -> u:(u:{a}, u:{a})

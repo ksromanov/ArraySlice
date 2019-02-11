@@ -1,7 +1,7 @@
 definition module _ArraySlice
 import StdArray
 
-:: ArraySlice a = {arr :: !.{a}, shift :: !Int, size :: !Int}
+:: .ArraySlice a
 
 instance Array ArraySlice a
 

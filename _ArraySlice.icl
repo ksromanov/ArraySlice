@@ -12,19 +12,19 @@ import StdArray, StdInt, _SystemArray, StdMisc, StdEnv
 instance Array ArraySlice a where
 	select {arr, shift, size} i = select arr (i + shift)
 
-	uselect {arr, shift, size} i = (el, {arr=arr`, shift, size})
+	uselect slice=:{arr, shift} i = (el, {slice & arr=arr`})
             where (el, arr`) = uselect arr (i + shift)
 
 	size {arr, shift, size}  = size
 
 	usize (slice=:{size = sz}) = (sz, slice)
 
-	update {arr, shift, size} i el = {arr = arr`, shift, size}
+	update slice=:{arr, shift} i el = { slice & arr = arr`}
             where arr` = update arr (i + shift) el
 
 	createArray size el = {arr = (createArray size el), shift = 0, size}
 
-	replace {arr, shift, size} i el = (el`, {arr = arr`, shift, size})
+	replace slice=:{arr, shift} i el = (el`, { slice & arr = arr`})
             where (el`, arr`) = replace arr (i + shift) el
 
     _createArray size = {arr = (_createArray size), shift = 0, size}

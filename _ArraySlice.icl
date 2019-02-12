@@ -12,19 +12,28 @@ import StdArray, StdInt, _SystemArray, StdMisc, StdEnv
 instance Array ArraySlice a where
 	select {arr, shift, size} i = select arr (i + shift)
 
-	uselect slice=:{arr, shift} i = (el, {slice & arr=arr`})
+	uselect slice=:{arr, shift, size = sz} i
+        | i < 0   = abort "Attempt to uselect before beginning of slice"
+        | i >= sz = abort "Attempt to uselect after end of slice"
+        | otherwise = (el, {slice & arr=arr`})
             where (el, arr`) = uselect arr (i + shift)
 
 	size {arr, shift, size}  = size
 
 	usize slice=:{size = sz} = (sz, slice)
 
-	update slice=:{arr, shift} i el = { slice & arr = arr`}
+	update slice=:{arr, shift, size = sz} i el
+        | i < 0   = abort "Attempt to update before beginning of slice"
+        | i >= sz = abort "Attempt to update after end of slice"
+        | otherwise = { slice & arr = arr`}
             where arr` = update arr (i + shift) el
 
 	createArray size el = {arr = (createArray size el), shift = 0, size}
 
-	replace slice=:{arr, shift} i el = (el`, { slice & arr = arr`})
+	replace slice=:{arr, shift, size = sz} i el
+        | i < 0   = abort "Attempt to replace before beginning of slice"
+        | i >= sz = abort "Attempt to replace after end of slice"
+        | otherwise = (el`, { slice & arr = arr`})
             where (el`, arr`) = replace arr (i + shift) el
 
     _createArray size = {arr = (_createArray size), shift = 0, size}
